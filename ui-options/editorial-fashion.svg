@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <rect width="1400" height="900" fill="#F6EFE3"/>
+  <rect x="30" y="30" width="240" height="840" rx="20" fill="#131313"/>
+  <text x="65" y="85" fill="#F3F4F6" font-family="Segoe UI, Arial" font-size="30" font-weight="700">TRACE.PK</text>
+
+  <rect x="50" y="155" width="200" height="40" rx="10" fill="#A38657"/>
+  <text x="65" y="182" fill="#FFFFFF" font-family="Segoe UI, Arial" font-size="20">Dashboard</text>
+  <text x="65" y="242" fill="#D1D5DB" font-family="Segoe UI, Arial" font-size="20">Products</text>
+  <text x="65" y="302" fill="#D1D5DB" font-family="Segoe UI, Arial" font-size="20">Categories</text>
+  <text x="65" y="362" fill="#D1D5DB" font-family="Segoe UI, Arial" font-size="20">Orders</text>
+  <text x="65" y="422" fill="#D1D5DB" font-family="Segoe UI, Arial" font-size="20">Users</text>
+  <text x="65" y="482" fill="#D1D5DB" font-family="Segoe UI, Arial" font-size="20">Analytics</text>
+
+  <rect x="300" y="30" width="1070" height="80" rx="18" fill="#FFFDF8"/>
+  <text x="330" y="80" fill="#121212" font-family="Segoe UI, Arial" font-size="30" font-weight="700">Editorial Fashion - Admin + Store UI</text>
+  <rect x="1170" y="50" width="170" height="40" rx="14" fill="#A38657"/>
+  <text x="1203" y="77" fill="#FFFFFF" font-family="Segoe UI, Arial" font-size="18">New Product</text>
+
+  <rect x="300" y="140" width="440" height="220" rx="20" fill="#FFFDF8"/>
+  <text x="335" y="200" fill="#121212" font-family="Segoe UI, Arial" font-size="36" font-weight="700">Spring Drop 2026</text>
+  <text x="335" y="245" fill="#7A6E5A" font-family="Segoe UI, Arial" font-size="20">Street-ready basics with clean silhouettes</text>
+  <rect x="335" y="285" width="160" height="45" rx="12" fill="#A38657"/>
+  <text x="380" y="314" fill="#FFFFFF" font-family="Segoe UI, Arial" font-size="18">Shop Now</text>
+
+  <rect x="770" y="140" width="600" height="220" rx="20" fill="#FFFDF8"/>
+  <text x="805" y="195" fill="#7A6E5A" font-family="Segoe UI, Arial" font-size="20">KPI</text>
+  <text x="805" y="245" fill="#121212" font-family="Segoe UI, Arial" font-size="48" font-weight="700">$128,400</text>
+  <text x="805" y="285" fill="#7A6E5A" font-family="Segoe UI, Arial" font-size="22">Monthly Revenue</text>
+
+  <rect x="300" y="390" width="1070" height="480" rx="20" fill="#FFFDF8"/>
+  <text x="335" y="445" fill="#121212" font-family="Segoe UI, Arial" font-size="34" font-weight="700">Top Products</text>
+
+  <text x="335" y="495" fill="#7A6E5A" font-family="Segoe UI, Arial" font-size="18">Product</text>
+  <text x="620" y="495" fill="#7A6E5A" font-family="Segoe UI, Arial" font-size="18">Category</text>
+  <text x="840" y="495" fill="#7A6E5A" font-family="Segoe UI, Arial" font-size="18">Stock</text>
+  <text x="980" y="495" fill="#7A6E5A" font-family="Segoe UI, Arial" font-size="18">Price</text>
+  <text x="1120" y="495" fill="#7A6E5A" font-family="Segoe UI, Arial" font-size="18">Status</text>
+
+  <line x1="335" y1="520" x2="1330" y2="520" stroke="#E5E7EB"/>
+  <text x="335" y="550" fill="#121212" font-family="Segoe UI, Arial" font-size="18">Cargo Pants</text>
+  <text x="620" y="550" fill="#121212" font-family="Segoe UI, Arial" font-size="18">Streetwear</text>
+  <text x="840" y="550" fill="#121212" font-family="Segoe UI, Arial" font-size="18">60</text>
+  <text x="980" y="550" fill="#121212" font-family="Segoe UI, Arial" font-size="18">PKR 3,200</text>
+  <rect x="1115" y="530" width="95" height="28" rx="10" fill="#BBF7D0"/>
+  <text x="1133" y="550" fill="#166534" font-family="Segoe UI, Arial" font-size="16">Healthy</text>
+
+  <line x1="335" y1="585" x2="1330" y2="585" stroke="#E5E7EB"/>
+  <text x="335" y="615" fill="#121212" font-family="Segoe UI, Arial" font-size="18">Cotton Tee</text>
+  <text x="620" y="615" fill="#121212" font-family="Segoe UI, Arial" font-size="18">Basics</text>
+  <text x="840" y="615" fill="#121212" font-family="Segoe UI, Arial" font-size="18">18</text>
+  <text x="980" y="615" fill="#121212" font-family="Segoe UI, Arial" font-size="18">PKR 999</text>
+  <rect x="1115" y="595" width="75" height="28" rx="10" fill="#FDE68A"/>
+  <text x="1140" y="615" fill="#92400E" font-family="Segoe UI, Arial" font-size="16">Low</text>
+
+  <rect x="30" y="830" width="240" height="40" rx="14" fill="#A38657"/>
+  <text x="55" y="856" fill="#FFFFFF" font-family="Segoe UI, Arial" font-size="16">Style Direction Preview</text>
+</svg>
