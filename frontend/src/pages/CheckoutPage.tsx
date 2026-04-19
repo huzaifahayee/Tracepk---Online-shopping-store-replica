@@ -27,7 +27,7 @@ export default function CheckoutPage() {
   const [shippingMethod, setShippingMethod] = useState('standard');
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const { items, subtotal, clearCart } = useCartStore();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, role } = useAuthStore();
   const placeOrder = usePlaceOrder();
   const navigate = useNavigate();
   const total = subtotal();
@@ -52,8 +52,11 @@ export default function CheckoutPage() {
     if (!isAuthenticated) {
       toast.info('Please log in to complete your purchase securely.');
       navigate('/login');
+    } else if (role === 'admin') {
+      toast.error('Admin accounts cannot place storefront orders. Please log in as a customer.');
+      navigate('/');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, role, navigate]);
 
   const onPlaceOrder = async () => {
     const vals = getValues();
@@ -71,8 +74,9 @@ export default function CheckoutPage() {
       clearCart();
       navigate(`/order-confirmation/${data.order_id}`);
     } catch (err: any) {
-      console.error("Order placement failed:", err?.response?.data || err);
-      toast.error(err?.response?.data?.error?.message || 'Failed to place order. Please try again.');
+      const message = err?.response?.data?.error?.message || 'Failed to place order. Please try again.';
+      toast.error(message);
+      console.error('Order placement failed:', err?.response?.data || err);
     }
   };
 
