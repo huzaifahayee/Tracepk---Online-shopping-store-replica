@@ -13,21 +13,35 @@ interface AuthState {
   logout: () => void;
 }
 
+const EMPTY: Pick<AuthState, 'user' | 'admin' | 'token' | 'role' | 'isAuthenticated'> = {
+  user: null,
+  admin: null,
+  token: null,
+  role: null,
+  isAuthenticated: false,
+};
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      user: null,
-      admin: null,
-      token: null,
-      role: null,
-      isAuthenticated: false,
+      ...EMPTY,
       login: (user, token) =>
-        set({ user, token, role: 'customer', isAuthenticated: true, admin: null }),
+        set({ ...EMPTY, user, token, role: 'customer', isAuthenticated: true }),
       adminLogin: (admin, token) =>
-        set({ admin, token, role: 'admin', isAuthenticated: true, user: null }),
-      logout: () =>
-        set({ user: null, admin: null, token: null, role: null, isAuthenticated: false }),
+        set({ ...EMPTY, admin, token, role: 'admin', isAuthenticated: true }),
+      logout: () => set({ ...EMPTY }),
     }),
-    { name: 'trace-auth' }
+    {
+      name: 'trace-auth',
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        const valid =
+          (state.role === 'customer' && !!state.user && !!state.token) ||
+          (state.role === 'admin' && !!state.admin && !!state.token);
+        if (!valid) {
+          Object.assign(state, EMPTY);
+        }
+      },
+    }
   )
 );

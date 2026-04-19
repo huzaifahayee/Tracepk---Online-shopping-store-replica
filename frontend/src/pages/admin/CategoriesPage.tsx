@@ -1,14 +1,36 @@
-import { useAdminCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from '@/hooks/useAdmin';
+import {
+  useAdminCategories,
+  useCreateCategory,
+  useUpdateCategory,
+  useDeleteCategory,
+  useUploadCategoryImage,
+} from '@/hooks/useAdmin';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { ApiCategory } from '@/types';
 import { Plus, Pencil, Trash2, X } from 'lucide-react';
+import { resolveProductImageUrl } from '@/lib/imageUrl';
 
 export default function CategoriesPage() {
   const { data: categories, isLoading } = useAdminCategories();
   const createCategory = useCreateCategory();
   const updateCategory = useUpdateCategory();
   const deleteCategory = useDeleteCategory();
+  const uploadCategoryImage = useUploadCategoryImage();
+
+  const handleImageFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const image_url = await uploadCategoryImage.mutateAsync(file);
+      setFormData((prev) => ({ ...prev, image_url }));
+      toast.success('Image uploaded — click Save Category to store it.');
+    } catch (err: unknown) {
+      const ax = err as { response?: { data?: { error?: { message?: string } } } };
+      toast.error(ax?.response?.data?.error?.message || 'Upload failed');
+    }
+    e.target.value = '';
+  };
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [formData, setFormData] = useState<Partial<ApiCategory>>({ category_name: '', description: '', image_url: '' });
@@ -91,16 +113,64 @@ export default function CategoriesPage() {
               />
             </div>
             <div>
-              <label className="text-[10px] uppercase tracking-widest text-foreground/55 block mb-1">Image URL</label>
-              <input
-                value={formData.image_url || ''}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                className="input-trace"
-                placeholder="https://..."
-              />
-              {formData.image_url && (
-                <div className="mt-2 w-32 h-32 border border-border">
-                  <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" />
+              <label className="text-[10px] uppercase tracking-widest text-foreground/55 block mb-1">
+                Category image
+              </label>
+              <p className="text-xs text-muted-foreground mb-2">
+                Upload a file from your computer (preferred) — the server stores it and saves a short URL in{' '}
+                <code className="text-[10px]">image_url</code>. You can also paste a full <code className="text-[10px]">https://…</code> URL.
+              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="btn-primary py-2 px-4 cursor-pointer inline-block">
+                  Choose file
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/gif,image/webp"
+                    className="hidden"
+                    disabled={uploadCategoryImage.isPending}
+                    onChange={handleImageFile}
+                  />
+                </label>
+                {uploadCategoryImage.isPending && (
+                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                    Uploading…
+                  </span>
+                )}
+              </div>
+              {formData.image_url ? (
+                <div className="mt-3 flex gap-3 items-start">
+                  <div className="w-24 h-24 bg-muted border border-border overflow-hidden flex-shrink-0">
+                    <img
+                      src={resolveProductImageUrl(formData.image_url)}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <label className="text-[10px] uppercase tracking-widest text-foreground/55 block mb-1">
+                      Image URL (stored in DB)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.image_url}
+                      onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                      className="input-trace text-xs"
+                      placeholder="/uploads/products/… or https://…"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-3">
+                  <label className="text-[10px] uppercase tracking-widest text-foreground/55 block mb-1">
+                    Or paste image URL only
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.image_url || ''}
+                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                    className="input-trace"
+                    placeholder="https://…"
+                  />
                 </div>
               )}
             </div>
@@ -115,7 +185,7 @@ export default function CategoriesPage() {
           </div>
           <button
             type="submit"
-            disabled={createCategory.isPending || updateCategory.isPending}
+            disabled={createCategory.isPending || updateCategory.isPending || uploadCategoryImage.isPending}
             className="btn-primary py-3 w-full"
           >
             {createCategory.isPending || updateCategory.isPending ? 'SAVING...' : 'SAVE CATEGORY'}
@@ -152,7 +222,11 @@ export default function CategoriesPage() {
                   <td className="py-3 px-4 w-16">
                     {c.image_url ? (
                       <div className="w-12 h-12 bg-muted/30 border border-border overflow-hidden">
-                        <img src={c.image_url} alt={c.category_name} className="w-full h-full object-cover" />
+                        <img
+                          src={resolveProductImageUrl(c.image_url)}
+                          alt={c.category_name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     ) : (
                       <div className="w-12 h-12 bg-muted/30 border border-border flex items-center justify-center text-[10px] text-muted-foreground">

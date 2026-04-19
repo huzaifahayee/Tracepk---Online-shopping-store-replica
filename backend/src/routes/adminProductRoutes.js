@@ -1,8 +1,11 @@
 const express = require("express");
+const multer = require("multer");
 const { getPool, sql } = require("../config/db");
 const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/apiError");
 const { requireAdminAuth } = require("../middleware/adminAuth");
+const { uploadProductImageOnce } = require("../middleware/uploadProductImage");
+const { listCategoriesResult } = require("../utils/listCategories");
 
 const router = express.Router();
 
@@ -11,14 +14,35 @@ router.use(requireAdminAuth);
 router.get(
   "/categories",
   asyncHandler(async (_req, res) => {
-    const pool = await getPool();
-    const result = await pool.request().query(`
-      SELECT category_id, category_name, description, image_url
-      FROM Categories
-      ORDER BY category_name ASC
-    `);
-
+    const result = await listCategoriesResult();
     return res.json({ success: true, data: result.recordset });
+  })
+);
+
+router.post(
+  "/categories/upload",
+  (req, res, next) => {
+    uploadProductImageOnce(req, res, (err) => {
+      if (!err) {
+        next();
+        return;
+      }
+      if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+        next(new ApiError(400, "VALIDATION_ERROR", "Image must be 5MB or smaller"));
+        return;
+      }
+      next(new ApiError(400, "VALIDATION_ERROR", err.message || "Upload failed"));
+    });
+  },
+  asyncHandler(async (req, res) => {
+    if (!req.file) {
+      throw new ApiError(400, "VALIDATION_ERROR", "No image file provided (field name: image)");
+    }
+    const image_url = `/uploads/products/${req.file.filename}`;
+    return res.status(201).json({
+      success: true,
+      data: { image_url },
+    });
   })
 );
 
@@ -131,6 +155,33 @@ router.get(
       `);
 
     return res.json({ success: true, data: result.recordset });
+  })
+);
+
+router.post(
+  "/upload",
+  (req, res, next) => {
+    uploadProductImageOnce(req, res, (err) => {
+      if (!err) {
+        next();
+        return;
+      }
+      if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+        next(new ApiError(400, "VALIDATION_ERROR", "Image must be 5MB or smaller"));
+        return;
+      }
+      next(new ApiError(400, "VALIDATION_ERROR", err.message || "Upload failed"));
+    });
+  },
+  asyncHandler(async (req, res) => {
+    if (!req.file) {
+      throw new ApiError(400, "VALIDATION_ERROR", "No image file provided (field name: image)");
+    }
+    const image_url = `/uploads/products/${req.file.filename}`;
+    return res.status(201).json({
+      success: true,
+      data: { image_url },
+    });
   })
 );
 

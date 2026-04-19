@@ -5,6 +5,7 @@ import { useState, useEffect, useMemo } from 'react';
 import ProductCard from './ProductCard';
 import { useSearchProducts } from '@/hooks/useProducts';
 import type { Product, ApiProduct } from '@/types';
+import { productImageUrls } from '@/lib/imageUrl';
 
 const mapToProduct = (apiP: ApiProduct): Product => ({
   id: apiP.product_id,
@@ -19,7 +20,7 @@ const mapToProduct = (apiP: ApiProduct): Product => ({
   inStock: apiP.stock_quantity > 0,
   sizes: apiP.size ? apiP.size.split(',') : [],
   colors: apiP.color ? [apiP.color] : [],
-  images: [apiP.image_url || ''],
+  images: productImageUrls(apiP.image_url),
   description: apiP.description || '',
   material: '100% Cotton',
   fit: 'Oversized Fit',

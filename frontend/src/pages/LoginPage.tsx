@@ -3,8 +3,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useLogin } from '@/hooks/useAuth';
+import { useAuthStore } from '@/stores/authStore';
 import { Eye, EyeOff } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const schema = z.object({
@@ -18,8 +19,13 @@ export default function LoginPage() {
   const login = useLogin();
   const navigate = useNavigate();
   const location = useLocation();
+  const logout = useAuthStore((s) => s.logout);
   const [showPw, setShowPw] = useState(false);
   const from = (location.state as { from?: string })?.from || '/';
+
+  useEffect(() => {
+    logout();
+  }, [logout]);
 
   const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({
     resolver: zodResolver(schema),
@@ -56,17 +62,20 @@ export default function LoginPage() {
           <label className="text-[10px] uppercase tracking-widest text-foreground/55 block mb-1">Password</label>
           <div className="relative">
             <input {...register('password')} type={showPw ? 'text' : 'password'} className="input-trace pr-8" />
-            <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-0 top-2.5 text-muted-foreground">
-              {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            <button
+              type="button"
+              onClick={() => setShowPw(!showPw)}
+              className="absolute right-0 top-2.5 text-muted-foreground"
+              aria-label={showPw ? 'Hide password' : 'Show password'}
+              title={showPw ? 'Hide password' : 'Show password'}
+            >
+              {showPw ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
             </button>
           </div>
           {errors.password && <p className="text-[10px] uppercase tracking-widest text-destructive mt-1">{errors.password.message}</p>}
         </div>
 
-        <div className="flex justify-between items-center text-[10px] uppercase tracking-widest text-muted-foreground mt-2">
-          <Link to="/admin/login" className="hover:text-highlight">
-            LOGIN AS ADMIN
-          </Link>
+        <div className="flex justify-end items-center text-[10px] uppercase tracking-widest text-muted-foreground mt-2">
           <Link to="/forgot-password" className="hover:text-highlight">
             FORGOT PASSWORD?
           </Link>

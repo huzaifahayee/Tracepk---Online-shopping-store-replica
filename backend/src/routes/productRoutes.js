@@ -3,6 +3,8 @@ const { getPool, sql } = require("../config/db");
 const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/apiError");
 
+const { listCategoriesResult } = require("../utils/listCategories");
+
 const router = express.Router();
 
 router.get(
@@ -84,13 +86,7 @@ router.get(
 router.get(
   "/categories",
   asyncHandler(async (_req, res) => {
-    const pool = await getPool();
-    const result = await pool.request().query(`
-      SELECT category_id, category_name, description, image_url
-      FROM Categories
-      ORDER BY category_name ASC
-    `);
-
+    const result = await listCategoriesResult();
     return res.json({ success: true, data: result.recordset });
   })
 );

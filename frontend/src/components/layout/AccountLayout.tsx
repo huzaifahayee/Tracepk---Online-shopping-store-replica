@@ -12,8 +12,13 @@ const sideLinks = [
 ];
 
 export default function AccountLayout() {
-  const { isAuthenticated } = useAuthStore();
-  if (!isAuthenticated) return <Navigate to="/login" state={{ from: '/account/orders' }} replace />;
+  const { isAuthenticated, role } = useAuthStore();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: '/account/orders' }} replace />;
+  }
+  if (role !== 'customer') {
+    return <Navigate to="/admin" replace />;
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10 grid md:grid-cols-[200px_1fr] gap-10">

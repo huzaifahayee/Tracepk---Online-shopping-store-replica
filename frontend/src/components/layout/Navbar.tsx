@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Search, Heart, ShoppingBag, Menu, X, ChevronDown, LogOut, User, Package } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
@@ -12,7 +12,30 @@ import { AnimatePresence, motion } from 'framer-motion';
 export default function Navbar() {
   const [megaOpen, setMegaOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const { isAuthenticated, user, logout, role } = useAuthStore();
+  const profileRef = useRef<HTMLDivElement | null>(null);
+  const { isAuthenticated, user, admin, logout, role } = useAuthStore();
+  const isAdmin = role === 'admin' && !!admin;
+  const isCustomer = role === 'customer' && !!user;
+
+  useEffect(() => {
+    if (!profileOpen) return;
+    const onPointerDown = (e: MouseEvent | TouchEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setProfileOpen(false);
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('touchstart', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('touchstart', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [profileOpen]);
   const { setSearchOpen, setCartOpen, mobileMenuOpen, setMobileMenuOpen } = useUIStore();
   const cartCount = useCartStore((s) => s.itemCount());
   const wishlistCount = useWishlistStore((s) => s.items.length);
@@ -96,12 +119,15 @@ export default function Navbar() {
               LOGIN
             </Link>
           ) : (
-            <div className="relative hidden md:block">
+            <div className="relative hidden md:block" ref={profileRef}>
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
+                aria-haspopup="menu"
+                aria-expanded={profileOpen}
                 className="w-[26px] h-[26px] bg-primary-foreground/10 text-primary-foreground text-[10px] flex items-center justify-center"
+                title={isAdmin ? 'Admin session' : isCustomer ? user.full_name : 'Account'}
               >
-                {user ? getInitials(user.full_name) : role === 'admin' ? 'AD' : '?'}
+                {isCustomer ? getInitials(user.full_name) : isAdmin ? 'AD' : '?'}
               </button>
 
               <AnimatePresence>
@@ -112,7 +138,7 @@ export default function Navbar() {
                     exit={{ opacity: 0, y: 4 }}
                     className="absolute right-0 top-full mt-2 w-48 bg-primary border border-primary-foreground/10 shadow-none z-10"
                   >
-                    {role === 'admin' ? (
+                    {isAdmin && (
                       <Link
                         to="/admin"
                         onClick={() => setProfileOpen(false)}
@@ -120,7 +146,8 @@ export default function Navbar() {
                       >
                         <Package className="h-3 w-3" /> Dashboard
                       </Link>
-                    ) : (
+                    )}
+                    {isCustomer && (
                       <>
                         <Link
                           to="/account/orders"

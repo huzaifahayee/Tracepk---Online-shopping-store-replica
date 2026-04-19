@@ -8,6 +8,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 import { useProducts, useCategories } from '@/hooks/useProducts';
 import type { Product, ApiProduct } from '@/types';
+import { productImageUrls, resolveProductImageUrl } from '@/lib/imageUrl';
 
 const mapToProduct = (apiP: ApiProduct): Product => ({
   id: apiP.product_id,
@@ -22,7 +23,7 @@ const mapToProduct = (apiP: ApiProduct): Product => ({
   inStock: apiP.stock_quantity > 0,
   sizes: apiP.size ? apiP.size.split(',') : [],
   colors: apiP.color ? [apiP.color] : [],
-  images: [apiP.image_url || ''],
+  images: productImageUrls(apiP.image_url),
   description: apiP.description || '',
   material: 'Premium Material',
   fit: 'Regular Fit',
@@ -163,7 +164,12 @@ export default function HomePage() {
               >
                 <div className="w-full h-full bg-muted border border-border overflow-hidden flex items-center justify-center">
                   {cat.image_url ? (
-                    <img src={cat.image_url} alt={cat.category_name} className="w-full h-full object-cover" loading="lazy" />
+                    <img
+                      src={resolveProductImageUrl(cat.image_url)}
+                      alt={cat.category_name}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
                   ) : (
                     <span className="font-display text-4xl text-foreground/5 opacity-50 absolute inset-0 flex items-center justify-center select-none uppercase -rotate-12 translate-x-3">{cat.category_name}</span>
                   )}

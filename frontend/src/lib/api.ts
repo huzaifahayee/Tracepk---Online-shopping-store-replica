@@ -1,23 +1,31 @@
 import axios from 'axios';
+import { useAuthStore } from '@/stores/authStore';
 
+// Don't hard-code Content-Type here: axios auto-picks the right one per request
+// (application/json for plain objects, multipart/form-data for FormData uploads, etc.)
 const api = axios.create({
   baseURL: '/api',
-  headers: { 'Content-Type': 'application/json' },
 });
 
-// Inject auth token from localStorage on every request
+function getAuthToken(): string | null {
+  const fromStore = useAuthStore.getState().token;
+  if (fromStore) return fromStore;
+  if (typeof localStorage === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem('trace-auth');
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { state?: { token?: string | null } };
+    return parsed?.state?.token ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// Inject auth token (store + persisted Zustand) on every request
 api.interceptors.request.use((config) => {
-  const authRaw = localStorage.getItem('trace-auth');
-  if (authRaw) {
-    try {
-      const auth = JSON.parse(authRaw);
-      const token = auth?.state?.token;
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    } catch {
-      // ignore parse errors
-    }
+  const token = getAuthToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });

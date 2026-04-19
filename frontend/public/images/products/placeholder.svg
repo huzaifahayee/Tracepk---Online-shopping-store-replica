@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1200" viewBox="0 0 800 1200" fill="none">
+  <rect width="800" height="1200" fill="#e8e8e8"/>
+  <path d="M400 520c-44 0-80 36-80 80v120h160V600c0-44-36-80-80-80zm0-80c53 0 96-43 96-96s-43-96-96-96-96 43-96 96 43 96 96 96z" fill="#b0b0b0"/>
+  <text x="400" y="820" text-anchor="middle" fill="#888" font-family="system-ui,sans-serif" font-size="28">Photo</text>
+</svg>

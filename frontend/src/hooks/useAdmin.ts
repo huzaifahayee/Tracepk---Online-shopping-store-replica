@@ -69,6 +69,34 @@ export function useDeleteCategory() {
   });
 }
 
+export function useUploadProductImage() {
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const form = new FormData();
+      form.append('image', file);
+      const { data } = await api.post<ApiResponse<{ image_url: string }>>(
+        '/admin/products/upload',
+        form
+      );
+      return data.data.image_url;
+    },
+  });
+}
+
+export function useUploadCategoryImage() {
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const form = new FormData();
+      form.append('image', file);
+      const { data } = await api.post<ApiResponse<{ image_url: string }>>(
+        '/admin/products/categories/upload',
+        form
+      );
+      return data.data.image_url;
+    },
+  });
+}
+
 export function useCreateProduct() {
   const qc = useQueryClient();
   return useMutation({

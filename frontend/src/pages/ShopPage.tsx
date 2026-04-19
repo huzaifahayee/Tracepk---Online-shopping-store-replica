@@ -5,6 +5,7 @@ import ProductCard from '@/components/common/ProductCard';
 import { ProductCardSkeleton } from '@/components/common/Skeleton';
 import { useProducts, useCategories } from '@/hooks/useProducts';
 import type { Product, SortOption, ApiProduct } from '@/types';
+import { productImageUrls } from '@/lib/imageUrl';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const mapToProduct = (apiP: ApiProduct): Product => ({
@@ -20,7 +21,7 @@ const mapToProduct = (apiP: ApiProduct): Product => ({
   inStock: apiP.stock_quantity > 0,
   sizes: apiP.size ? apiP.size.split(',') : [],
   colors: apiP.color ? [apiP.color] : [],
-  images: [apiP.image_url || ''],
+  images: productImageUrls(apiP.image_url),
   description: apiP.description || '',
   material: '100% Premium Material',
   fit: 'Oversized Fit',

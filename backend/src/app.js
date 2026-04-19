@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const env = require("./config/env");
@@ -19,6 +20,9 @@ app.use(
   })
 );
 app.use(express.json());
+
+// Serve product uploads / static files (paths stored in Products.image_url)
+app.use(express.static(path.join(__dirname, "../public")));
 
 app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "Backend running" });

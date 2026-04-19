@@ -3,8 +3,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAdminLogin } from '@/hooks/useAuth';
+import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
 const schema = z.object({
@@ -17,7 +18,12 @@ type Inputs = z.infer<typeof schema>;
 export default function AdminLoginPage() {
   const login = useAdminLogin();
   const navigate = useNavigate();
+  const logout = useAuthStore((s) => s.logout);
   const [showPw, setShowPw] = useState(false);
+
+  useEffect(() => {
+    logout();
+  }, [logout]);
 
   const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({
     resolver: zodResolver(schema),
@@ -60,8 +66,14 @@ export default function AdminLoginPage() {
                 type={showPw ? 'text' : 'password'}
                 className="bg-transparent border-b border-primary-foreground/20 text-primary-foreground text-sm py-2 w-full outline-none focus:border-highlight pr-8"
               />
-              <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-0 top-2.5 text-primary-foreground/40">
-                {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              <button
+                type="button"
+                onClick={() => setShowPw(!showPw)}
+                className="absolute right-0 top-2.5 text-primary-foreground/40"
+                aria-label={showPw ? 'Hide password' : 'Show password'}
+                title={showPw ? 'Hide password' : 'Show password'}
+              >
+                {showPw ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
               </button>
             </div>
             {errors.password && <p className="text-[10px] text-destructive mt-1">{errors.password.message}</p>}

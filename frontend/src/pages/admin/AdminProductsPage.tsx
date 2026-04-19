@@ -1,20 +1,73 @@
-import { useState } from 'react';
-import { useAdminProducts, useAdminCategories, useCreateProduct, useUpdateProduct, useDeleteProduct } from '@/hooks/useAdmin';
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  useAdminProducts,
+  useAdminCategories,
+  useUploadProductImage,
+  useCreateProduct,
+  useUpdateProduct,
+  useDeleteProduct,
+} from '@/hooks/useAdmin';
+import { resolveProductImageUrl } from '@/lib/imageUrl';
 import { formatPrice } from '@/lib/utils';
 import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { toast } from 'sonner';
-import type { ApiProduct } from '@/types';
+import type { ApiCategory, ApiProduct } from '@/types';
 
 export default function AdminProductsPage() {
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editProduct, setEditProduct] = useState<ApiProduct | null>(null);
   const { data: products, isLoading } = useAdminProducts(search);
-  const { data: categories } = useAdminCategories();
+  const {
+    data: categories,
+    isLoading: categoriesLoading,
+    isError: categoriesError,
+  } = useAdminCategories();
+
+  /** Ensures edit mode always has an option for the product's category even if /categories failed or returned nothing */
+  const categoryOptions = useMemo((): ApiCategory[] => {
+    const list = categories ?? [];
+    if (editProduct && !list.some((c) => c.category_id === editProduct.category_id)) {
+      return [
+        {
+          category_id: editProduct.category_id,
+          category_name: editProduct.category_name,
+          description: null,
+          image_url: null,
+        },
+        ...list,
+      ];
+    }
+    return list;
+  }, [categories, editProduct]);
+
+  useEffect(() => {
+    if (categoriesError) {
+      toast.error(
+        'Could not load categories. Use an admin account (not customer login), keep the API running, or add categories in the database.'
+      );
+    }
+  }, [categoriesError]);
+  const uploadProductImage = useUploadProductImage();
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
+
+  const handleImageFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const image_url = await uploadProductImage.mutateAsync(file);
+      setForm((prev) => ({ ...prev, image_url }));
+      toast.success('Image uploaded — URL saved in form; submit to store on product.');
+    } catch (err: unknown) {
+      const ax = err as { response?: { data?: { error?: { message?: string } } } };
+      toast.error(ax?.response?.data?.error?.message || 'Upload failed');
+    }
+    e.target.value = '';
+  };
 
   const [form, setForm] = useState({
     product_name: '',
@@ -116,8 +169,14 @@ export default function AdminProductsPage() {
               {products?.map((p) => (
                 <tr key={p.product_id} className="border-b border-border hover:bg-muted/20">
                   <td className="py-2 px-4">
-                    <div className="w-12 h-12 bg-muted">
-                      {p.image_url && <img src={p.image_url} alt="" className="w-full h-full object-cover" />}
+                    <div className="w-12 h-12 bg-muted overflow-hidden">
+                      {p.image_url ? (
+                        <img
+                          src={resolveProductImageUrl(p.image_url)}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      ) : null}
                     </div>
                   </td>
                   <td className="py-2 px-4 font-medium">{p.product_name}</td>
@@ -151,15 +210,83 @@ export default function AdminProductsPage() {
                   <button onClick={() => setModalOpen(false)}><X className="h-5 w-5" /></button>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest text-foreground/55 block mb-1">
+                      Product image
+                    </label>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Upload a file — the server stores it and puts the URL in{' '}
+                      <code className="text-[10px]">image_url</code> when you save the product.
+                    </p>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <label className="btn-primary py-2 px-4 cursor-pointer inline-block">
+                        Choose file
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/gif,image/webp"
+                          className="hidden"
+                          disabled={uploadProductImage.isPending}
+                          onChange={handleImageFile}
+                        />
+                      </label>
+                      {uploadProductImage.isPending && (
+                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                          Uploading…
+                        </span>
+                      )}
+                    </div>
+                    {form.image_url ? (
+                      <div className="mt-3 flex gap-3 items-start">
+                        <div className="w-24 h-24 bg-muted border border-border overflow-hidden flex-shrink-0">
+                          <img
+                            src={resolveProductImageUrl(form.image_url)}
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="text-[10px] uppercase tracking-widest text-foreground/55 block mb-1">
+                            Image URL (stored in DB)
+                          </label>
+                          <input
+                            type="text"
+                            value={form.image_url}
+                            onChange={(e) => setForm({ ...form, image_url: e.target.value })}
+                            className="input-trace text-xs"
+                            placeholder="/uploads/products/… or https://…"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-3">
+                        <label className="text-[10px] uppercase tracking-widest text-foreground/55 block mb-1">
+                          Or paste image URL only
+                        </label>
+                        <input
+                          type="text"
+                          value={form.image_url}
+                          onChange={(e) => setForm({ ...form, image_url: e.target.value })}
+                          className="input-trace"
+                          placeholder="https://… or /images/products/…"
+                        />
+                      </div>
+                    )}
+                  </div>
                   {[
-                    { key: 'product_name', label: 'Product Name', type: 'text', required: true },
-                    { key: 'description', label: 'Description', type: 'text', required: false },
-                    { key: 'price', label: 'Price', type: 'number', required: true },
-                    { key: 'stock_quantity', label: 'Stock Quantity', type: 'number', required: true },
-                    { key: 'size', label: 'Size', type: 'text', required: false },
-                    { key: 'color', label: 'Color', type: 'text', required: false },
-                    { key: 'image_url', label: 'Image URL', type: 'text', required: false },
-                  ].map(({ key, label, type, required }) => (
+                    { key: 'product_name', label: 'Product Name', type: 'text', required: true, placeholder: '', hint: '' },
+                    { key: 'description', label: 'Description', type: 'text', required: false, placeholder: '', hint: '' },
+                    { key: 'price', label: 'Price', type: 'number', required: true, placeholder: '', hint: '' },
+                    { key: 'stock_quantity', label: 'Stock Quantity', type: 'number', required: true, placeholder: '', hint: '' },
+                    {
+                      key: 'size',
+                      label: 'Sizes',
+                      type: 'text',
+                      required: false,
+                      placeholder: 'S, M, L, XL',
+                      hint: 'Comma-separated list. Each value becomes a selectable button on the product page.',
+                    },
+                    { key: 'color', label: 'Color', type: 'text', required: false, placeholder: '', hint: '' },
+                  ].map(({ key, label, type, required, placeholder, hint }) => (
                     <div key={key}>
                       <label className="text-[10px] uppercase tracking-widest text-foreground/55 block mb-1">{label}</label>
                       <input
@@ -167,25 +294,45 @@ export default function AdminProductsPage() {
                         value={form[key as keyof typeof form]}
                         onChange={(e) => setForm({ ...form, [key]: e.target.value })}
                         required={required}
+                        placeholder={placeholder || undefined}
                         className="input-trace"
                       />
+                      {hint && <p className="mt-1 text-[10px] text-muted-foreground">{hint}</p>}
                     </div>
                   ))}
                   <div>
                     <label className="text-[10px] uppercase tracking-widest text-foreground/55 block mb-1">Category</label>
+                    {!categoriesLoading && categoryOptions.length === 0 && (
+                      <p className="text-xs text-destructive mb-2">
+                        No categories found. Add them under{' '}
+                        <Link to="/admin/categories" className="underline text-highlight">
+                          Admin → Categories
+                        </Link>{' '}
+                        or run <code className="text-[10px]">node seedCategories.js</code> in the backend folder (after configuring <code className="text-[10px]">.env</code>).
+                      </p>
+                    )}
                     <select
                       value={form.category_id}
                       onChange={(e) => setForm({ ...form, category_id: e.target.value })}
                       className="input-trace"
                       required
+                      disabled={categoriesLoading}
                     >
-                      <option value="">Select Category</option>
-                      {categories?.map((c) => (
-                        <option key={c.category_id} value={c.category_id}>{c.category_name}</option>
+                      <option value="">
+                        {categoriesLoading ? 'Loading categories…' : 'Select Category'}
+                      </option>
+                      {categoryOptions.map((c) => (
+                        <option key={c.category_id} value={c.category_id}>
+                          {c.category_name}
+                        </option>
                       ))}
                     </select>
                   </div>
-                  <button type="submit" disabled={createProduct.isPending || updateProduct.isPending} className="w-full btn-primary py-3">
+                  <button
+                    type="submit"
+                    disabled={createProduct.isPending || updateProduct.isPending || uploadProductImage.isPending}
+                    className="w-full btn-primary py-3"
+                  >
                     {editProduct ? 'UPDATE PRODUCT' : 'CREATE PRODUCT'}
                   </button>
                 </form>

@@ -1,4 +1,4 @@
-import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { useAdminDashboard } from '@/hooks/useAdmin';
 
 const COLORS = ['hsl(0 0% 7%)', 'hsl(38 94% 54%)', 'hsl(0 0% 44%)', 'hsl(0 0% 70%)', 'hsl(0 0% 87%)'];
@@ -73,14 +73,42 @@ export default function AnalyticsPage() {
         <div className="card-trace p-5">
           <h3 className="text-[10px] uppercase tracking-widest text-muted-foreground mb-4">REVENUE BY CATEGORY</h3>
           {dashboard.revenueByCategory.length > 0 ? (
-            <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <Pie data={dashboard.revenueByCategory} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
+                <Pie
+                  data={dashboard.revenueByCategory}
+                  cx="50%"
+                  cy="45%"
+                  innerRadius={50}
+                  outerRadius={90}
+                  paddingAngle={2}
+                  dataKey="value"
+                  nameKey="name"
+                  label={({ percent }) =>
+                    percent !== undefined && percent > 0.04 ? `${(percent * 100).toFixed(0)}%` : ''
+                  }
+                  labelLine={false}
+                >
                   {dashboard.revenueByCategory.map((_, i) => (
                     <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  formatter={(value: number, name: string) => [
+                    `Rs ${Number(value).toLocaleString()}`,
+                    name,
+                  ]}
+                />
+                <Legend
+                  verticalAlign="bottom"
+                  height={36}
+                  iconType="circle"
+                  wrapperStyle={{ fontSize: 11 }}
+                  formatter={(value, entry) => {
+                    const v = (entry?.payload as { value?: number } | undefined)?.value ?? 0;
+                    return `${value} — Rs ${Number(v).toLocaleString()}`;
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
           ) : (

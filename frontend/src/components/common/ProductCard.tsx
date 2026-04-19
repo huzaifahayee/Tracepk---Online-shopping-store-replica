@@ -7,6 +7,7 @@ import { useUIStore } from '@/stores/uiStore';
 import Badge from './Badge';
 import type { Product } from '@/types';
 import { useState } from 'react';
+import { PRODUCT_IMAGE_PLACEHOLDER, fallbackProductImage } from '@/lib/imageUrl';
 
 interface ProductCardProps {
   product: Product;
@@ -65,10 +66,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Image */}
       <div className="aspect-[3/4] relative overflow-hidden bg-muted">
         <img
-          src={product.images[0]}
+          src={product.images[0] || PRODUCT_IMAGE_PLACEHOLDER}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
           loading="lazy"
+          onError={(e) => fallbackProductImage(e.currentTarget)}
         />
         {product.images[1] && (
           <img
@@ -76,6 +78,9 @@ export default function ProductCard({ product }: ProductCardProps) {
             alt={`${product.name} alt`}
             className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             loading="lazy"
+            onError={(e) => {
+              e.currentTarget.style.opacity = '0';
+            }}
           />
         )}
 

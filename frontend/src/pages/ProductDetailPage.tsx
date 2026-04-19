@@ -9,6 +9,7 @@ import { useUIStore } from '@/stores/uiStore';
 import { formatPrice, cn } from '@/lib/utils';
 import ProductCard from '@/components/common/ProductCard';
 import type { Product, ApiProduct } from '@/types';
+import { PRODUCT_IMAGE_PLACEHOLDER, fallbackProductImage, productImageUrls } from '@/lib/imageUrl';
 
 const mapToProduct = (apiP: ApiProduct): Product => ({
   id: apiP.product_id,
@@ -23,7 +24,7 @@ const mapToProduct = (apiP: ApiProduct): Product => ({
   inStock: apiP.stock_quantity > 0,
   sizes: apiP.size ? apiP.size.split(',') : [],
   colors: apiP.color ? [apiP.color] : [],
-  images: [apiP.image_url || ''],
+  images: productImageUrls(apiP.image_url),
   description: apiP.description || '',
   material: '100% Premium Material',
   fit: 'Oversized Fit',
@@ -114,9 +115,10 @@ export default function ProductDetailPage() {
               onClick={() => setLightbox(true)}
             >
               <img
-                src={product.images[mainImage]}
+                src={product.images[mainImage] || PRODUCT_IMAGE_PLACEHOLDER}
                 alt={product.name}
                 className="w-full h-full object-cover"
+                onError={(e) => fallbackProductImage(e.currentTarget)}
               />
             </div>
             {product.images.length > 1 && (
@@ -130,7 +132,12 @@ export default function ProductDetailPage() {
                       mainImage === i ? 'border-foreground' : 'border-transparent'
                     )}
                   >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
+                    <img
+                      src={img}
+                      alt=""
+                      className="w-full h-full object-cover"
+                      onError={(e) => fallbackProductImage(e.currentTarget)}
+                    />
                   </button>
                 ))}
               </div>
@@ -293,9 +300,10 @@ export default function ProductDetailPage() {
               <span className="text-2xl">×</span>
             </button>
             <img
-              src={product.images[mainImage]}
+              src={product.images[mainImage] || PRODUCT_IMAGE_PLACEHOLDER}
               alt={product.name}
               className="max-h-[90vh] object-contain"
+              onError={(e) => fallbackProductImage(e.currentTarget)}
             />
           </motion.div>
         )}
