@@ -7,6 +7,11 @@ async function start() {
     await getPool();
     // eslint-disable-next-line no-console
     console.log("Connected to MSSQL");
+
+    // Run schema migrations (idempotent)
+    const runMigrations = require("./utils/migrate");
+    await runMigrations();
+
     app.listen(env.port, () => {
       // eslint-disable-next-line no-console
       console.log(`Server running on http://localhost:${env.port}`);
