@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
-import type { ApiResponse, ApiProduct, PaginatedData } from '@/types';
+import type { ApiResponse, ApiProduct, ApiCategory, PaginatedData } from '@/types';
 
 interface ProductsParams {
   page?: number;

@@ -1,55 +1,62 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import Badge from '@/components/common/Badge';
 import { formatPrice } from '@/lib/utils';
-import { useAdminOrders } from '@/hooks/useAdmin';
-import { useAdminProducts } from '@/hooks/useAdmin';
-import { useMemo } from 'react';
+import { useAdminDashboard } from '@/hooks/useAdmin';
+import { Users, ShoppingBag, DollarSign, Clock, AlertCircle } from 'lucide-react';
 
 const PIE_COLORS = ['hsl(0 0% 7%)', 'hsl(38 94% 54%)', 'hsl(0 0% 44%)', 'hsl(0 0% 87%)', 'hsl(0 60% 50%)'];
 
 export default function AdminOverviewPage() {
-  const { data: orders } = useAdminOrders();
-  const { data: products } = useAdminProducts();
+  const { data: dashboard, isLoading, isError } = useAdminDashboard();
 
-  const totalRevenue = useMemo(() => {
-    return (orders || []).reduce((sum, o) => sum + Number(o.total_amount), 0);
-  }, [orders]);
+  if (isLoading) {
+    return (
+      <div>
+        <h1 className="font-display text-5xl mb-6">OVERVIEW</h1>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="card-trace p-5 animate-pulse">
+              <div className="h-8 bg-muted rounded w-2/3 mb-2" />
+              <div className="h-3 bg-muted rounded w-1/2" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
-  const todayOrders = useMemo(() => {
-    const today = new Date().toDateString();
-    return (orders || []).filter((o) => new Date(o.order_date).toDateString() === today).length;
-  }, [orders]);
+  if (isError || !dashboard) {
+    return (
+      <div>
+        <h1 className="font-display text-5xl mb-6">OVERVIEW</h1>
+        <div className="card-trace p-10 text-center">
+          <AlertCircle className="h-8 w-8 text-destructive mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">Failed to load dashboard data. Make sure the backend is running.</p>
+        </div>
+      </div>
+    );
+  }
 
-  const totalCustomers = useMemo(() => {
-    const emails = new Set((orders || []).map((o) => o.customer_email));
-    return emails.size;
-  }, [orders]);
+  const revenueData = (dashboard.revenue_over_time || []).map((d) => ({
+    day: new Date(d.order_day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    revenue: Number(d.daily_revenue),
+  }));
 
-  const orderStatusData = useMemo(() => {
-    const counts: Record<string, number> = {};
-    (orders || []).forEach((o) => {
-      counts[o.order_status] = (counts[o.order_status] || 0) + 1;
-    });
-    return Object.entries(counts).map(([name, value]) => ({ name, value }));
-  }, [orders]);
+  const orderStatusData = dashboard.order_status_breakdown || [];
 
-  const revenueData = useMemo(() => {
-    const days: Record<string, number> = {};
-    (orders || []).forEach((o) => {
-      const d = new Date(o.order_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      days[d] = (days[d] || 0) + Number(o.total_amount);
-    });
-    return Object.entries(days).slice(-30).map(([day, revenue]) => ({ day, revenue }));
-  }, [orders]);
-
-  const recentOrders = (orders || []).slice(0, 5);
+  const topProducts = (dashboard.top_products || []).map((p) => ({
+    name: p.product_name.length > 20 ? p.product_name.slice(0, 20) + '...' : p.product_name,
+    sales: p.units_sold,
+  }));
 
   const stats = [
-    { label: 'Total Revenue', value: formatPrice(totalRevenue), change: `${(orders || []).length} orders` },
-    { label: 'Orders Today', value: String(todayOrders), change: 'today' },
-    { label: 'Total Customers', value: String(totalCustomers), change: 'unique' },
-    { label: 'Products Live', value: String((products || []).length), change: 'active' },
+    { label: 'Total Users', value: String(dashboard.total_users), icon: Users, accent: 'text-foreground' },
+    { label: 'Total Orders', value: String(dashboard.total_orders), icon: ShoppingBag, accent: 'text-foreground' },
+    { label: 'Total Revenue', value: formatPrice(dashboard.total_revenue), icon: DollarSign, accent: 'text-highlight' },
+    { label: 'Pending Orders', value: String(dashboard.pending_orders), icon: Clock, accent: 'text-foreground' },
   ];
+
+  const recentOrders = dashboard.recent_orders || [];
 
   return (
     <div>
@@ -58,21 +65,24 @@ export default function AdminOverviewPage() {
         <span className="text-xs text-muted-foreground">{new Date().toLocaleDateString()}</span>
       </div>
 
-      {/* Stats Grid */}
+      {/* KPI Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {stats.map((stat) => (
           <div key={stat.label} className="card-trace p-5">
-            <p className="font-display text-4xl">{stat.value}</p>
+            <div className="flex items-center justify-between mb-2">
+              <stat.icon className={`h-5 w-5 ${stat.accent} opacity-60`} />
+            </div>
+            <p className={`font-display text-4xl ${stat.accent}`}>{stat.value}</p>
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground mt-1">{stat.label}</p>
-            <span className="text-[10px] text-highlight mt-1 inline-block">{stat.change}</span>
           </div>
         ))}
       </div>
 
-      {/* Charts */}
+      {/* Charts Row */}
       <div className="grid lg:grid-cols-2 gap-4 mb-6">
+        {/* Revenue Over Time */}
         <div className="card-trace p-5">
-          <h3 className="text-[10px] uppercase tracking-widest text-muted-foreground mb-4">REVENUE</h3>
+          <h3 className="text-[10px] uppercase tracking-widest text-muted-foreground mb-4">REVENUE (LAST 30 DAYS)</h3>
           {revenueData.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <AreaChart data={revenueData}>
@@ -84,9 +94,11 @@ export default function AdminOverviewPage() {
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-muted-foreground text-sm py-10 text-center">No revenue data yet</p>
+            <p className="text-muted-foreground text-sm py-10 text-center">No revenue data in the last 30 days</p>
           )}
         </div>
+
+        {/* Orders by Status */}
         <div className="card-trace p-5">
           <h3 className="text-[10px] uppercase tracking-widest text-muted-foreground mb-4">ORDERS BY STATUS</h3>
           {orderStatusData.length > 0 ? (
@@ -105,6 +117,22 @@ export default function AdminOverviewPage() {
           )}
         </div>
       </div>
+
+      {/* Top Products */}
+      {topProducts.length > 0 && (
+        <div className="card-trace p-5 mb-6">
+          <h3 className="text-[10px] uppercase tracking-widest text-muted-foreground mb-4">TOP PRODUCTS BY UNITS SOLD</h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={topProducts} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(0 0% 87%)" />
+              <XAxis type="number" tick={{ fontSize: 9 }} />
+              <YAxis dataKey="name" type="category" tick={{ fontSize: 9 }} width={140} />
+              <Tooltip />
+              <Bar dataKey="sales" fill="hsl(38 94% 54%)" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {/* Recent Orders */}
       <div className="card-trace">
