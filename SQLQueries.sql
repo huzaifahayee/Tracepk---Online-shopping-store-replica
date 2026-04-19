@@ -106,37 +106,41 @@ CREATE TABLE Shopping_Cart (
 -- ============================================================
 
 INSERT INTO Categories (category_name, description) VALUES
-('Research Chemicals', 'Items for the bold and the curious.'),
-('Personal Care',      'Grooming and maintenance.'),
-('Streetwear',         'Clothing for the urban explorer.');
+('JERSEYS', 'Jerseys category.'),
+('DENIM', 'Denim and jeans.'),
+('GRAPHIC TEES', 'Graphic t-shirts.'),
+('SWEATPANTS & TROUSERS', 'Sweatpants and trousers.'),
+('CARGOS', 'Cargo pants.'),
+('ESSENTIAL TOPS', 'Basic everyday tops.');
 
 INSERT INTO Users (username, email, password_hash, full_name, phone_number, address) VALUES
-('Saad_The_Cook',  'saad@example.com',     'hash_12345', 'Saad Ahmed',      '555-0101', '123 Breaking Bad Lane'),
-('huZaifa_Beard',  'huzaifa@example.com',  'hash_67890', 'Huzaifa Hayee',   '555-0202', '456 Follicle Ave'),
-('Abdullah_Flex',  'abdullah@example.com', 'hash_abcde', 'Abdullah Sheikh', '555-0303', '789 Gains Blvd');
+('Saad_Trace',  'saad@trace.pk',     'hash_12345', 'Saad Ahmed',      '0300-1111111', '123 Fashion Ave, Lahore'),
+('Huzaifa_Drip',  'huzaifa@trace.pk',  'hash_67890', 'Huzaifa Hayee',   '0300-2222222', '456 Trend Blvd, Karachi'),
+('Abdullah_Style',  'abdullah@trace.pk', 'hash_abcde', 'Abdullah Sheikh', '0300-3333333', '789 Hype St, Islamabad');
 
 INSERT INTO Admins (username, password_hash, full_name, email) VALUES
-('Big_Boss', 'admin_hash_99', 'The Overseer', 'admin@store.com');
+('Admin_Trace', 'admin_hash_99', 'Trace Owner', 'admin@trace.pk');
 
-INSERT INTO Products (category_id, product_name, description, price, stock_quantity) VALUES
-(1, 'Blue Sky',       'I did it, because I was good at it.', 50.00,   100),
-(2, 'Minoxidil',      'Unc use it.',                         20.00,    50),
-(1, 'Pure Caffeine',  'Mids be driving me crazy.',           15.00,   200);
+INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url) VALUES
+(1, '96 Double Layer Jersey', 'Double-layer mesh construction.', 2590.00, 100, 'L', 'Electric Blue', 'https://groovypakistan.com/cdn/shop/files/4_aea94a94-ea5c-4083-8296-0ca07282c278.jpg?crop=center&height=2025&v=1756896134&width=1558'),
+(2, 'CORE Denim', 'Classic 5-pocket construction.', 3600.00, 100, '32', 'Dark Stone', 'https://groovypakistan.com/cdn/shop/files/1_073cb8a5-e2b6-4a05-8c0e-8e54ed9c7555.jpg?crop=center&height=2025&v=1772897588&width=1558'),
+(3, 'REBIRTH Tee', 'Mineral washed heavyweight tee.', 2490.00, 100, 'L', 'Mineral Wash', 'https://groovypakistan.com/cdn/shop/files/9_a6fa3c2d-44ff-4280-bb28-4acef96aaa15.jpg?crop=center&height=2025&v=1756891432&width=1558'),
+(4, 'Baggy Trousers', 'Wide-leg silhouette.', 2490.00, 100, 'M', 'Black', 'https://groovypakistan.com/cdn/shop/files/1_fd68d348-5bf2-480c-8a33-6eb176f05e16.jpg?crop=center&height=2025&v=1756296747&width=1558'),
+(5, 'Cargo Pants', 'Heavy-duty streetwear cargo.', 3200.00, 60, 'L', 'Olive', 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=1000&q=80');
 
 -- Orders
 INSERT INTO Orders (user_id, total_amount, delivery_address, order_status)
-VALUES (1, 65.00, '123 Breaking Bad Lane', 'Processing');
+VALUES (1, 2490.00, '123 Fashion Ave, Lahore', 'Processing');
 
 INSERT INTO Orders (user_id, total_amount, delivery_address, order_status)
-VALUES (2, 20.00, '456 Follicle Ave', 'Shipped');
+VALUES (2, 3600.00, '456 Trend Blvd, Karachi', 'Shipped');
 
 -- Order Items
 INSERT INTO Order_Items (order_id, product_id, quantity, unit_price) VALUES
-(1, 1, 1, 50.00),
-(1, 3, 1, 15.00);
+(1, 4, 1, 2490.00);
 
 INSERT INTO Order_Items (order_id, product_id, quantity, unit_price)
-VALUES (2, 2, 1, 20.00);
+VALUES (2, 2, 1, 3600.00);
 
 -- Shopping Cart
 INSERT INTO Shopping_Cart (user_id, product_id, quantity) VALUES (3, 3, 5);
@@ -144,18 +148,13 @@ INSERT INTO Shopping_Cart (user_id, product_id, quantity) VALUES (1, 1, 2);
 
 -- Extra product + order for HAVING > 5 demo
 INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-VALUES (1, 'Men Cotton Shirt', 'Casual everyday shirt', 1200.00, 100, 'M', 'White', 'shirt.jpg');
+VALUES (6, 'Essential Cotton Shirt', 'Casual everyday shirt', 2290.00, 100, 'M', 'White', 'https://groovypakistan.com/cdn/shop/files/5_965b141a-ad1e-41e2-a463-c9df8897cadc.jpg');
 
 INSERT INTO Orders (user_id, order_date, total_amount, payment_method, delivery_address, order_status)
-VALUES (1, '2026-03-01', 7200.00, 'Cash on Delivery', 'House 5, Model Town, Lahore', 'Delivered');
+VALUES (1, '2026-03-01', 13740.00, 'Cash on Delivery', '123 Fashion Ave, Lahore', 'Delivered');
 
 INSERT INTO Order_Items (order_id, product_id, quantity, unit_price)
-VALUES (3, 4, 6, 1200.00);
-
--- Extra product for Streetwear discount demo
-INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-VALUES (3, 'Cargo Pants', 'Heavy-duty streetwear cargo trousers.', 3200.00, 60, 'L', 'Olive', 'cargo.jpg');
-
+VALUES (3, 6, 6, 2290.00);
 
 -- ============================================================
 --  PHASE 2 - FUNCTIONALITIES
@@ -973,212 +972,4 @@ VALUES ('admin', 'admin@trace.pk', 'TRACE Admin', 'admin123');
 
 USE OnlineClothingBrand;
 SELECT * FROM Admins;
-
--- ============================================================
---  AUTO-GENERATED IMPORTS FROM FRONTEND MOCK DATA
--- ============================================================
-
-
--- CATEGORIES --
-IF NOT EXISTS (SELECT 1 FROM Categories WHERE category_name = 'JERSEYS')
-BEGIN
-    INSERT INTO Categories (category_name, description) VALUES ('JERSEYS', 'Jerseys category.');
-END
-IF NOT EXISTS (SELECT 1 FROM Categories WHERE category_name = 'DENIM')
-BEGIN
-    INSERT INTO Categories (category_name, description) VALUES ('DENIM', 'Denim and jeans.');
-END
-IF NOT EXISTS (SELECT 1 FROM Categories WHERE category_name = 'GRAPHIC TEES')
-BEGIN
-    INSERT INTO Categories (category_name, description) VALUES ('GRAPHIC TEES', 'Graphic t-shirts.');
-END
-IF NOT EXISTS (SELECT 1 FROM Categories WHERE category_name = 'SWEATPANTS & TROUSERS')
-BEGIN
-    INSERT INTO Categories (category_name, description) VALUES ('SWEATPANTS & TROUSERS', 'Sweatpants and trousers.');
-END
-IF NOT EXISTS (SELECT 1 FROM Categories WHERE category_name = 'CARGOS')
-BEGIN
-    INSERT INTO Categories (category_name, description) VALUES ('CARGOS', 'Cargo pants.');
-END
-IF NOT EXISTS (SELECT 1 FROM Categories WHERE category_name = 'ESSENTIAL TOPS')
-BEGIN
-    INSERT INTO Categories (category_name, description) VALUES ('ESSENTIAL TOPS', 'Basic everyday tops.');
-END
-IF NOT EXISTS (SELECT 1 FROM Categories WHERE category_name = 'TANK TOPS')
-BEGIN
-    INSERT INTO Categories (category_name, description) VALUES ('TANK TOPS', 'Tank tops and sleeveless.');
-END
-IF NOT EXISTS (SELECT 1 FROM Categories WHERE category_name = 'BABYTEES')
-BEGIN
-    INSERT INTO Categories (category_name, description) VALUES ('BABYTEES', 'Baby tees.');
-END
-IF NOT EXISTS (SELECT 1 FROM Categories WHERE category_name = 'HOODIES')
-BEGIN
-    INSERT INTO Categories (category_name, description) VALUES ('HOODIES', 'Hoodies and sweatshirts.');
-END
-IF NOT EXISTS (SELECT 1 FROM Categories WHERE category_name = 'OUTERWEAR')
-BEGIN
-    INSERT INTO Categories (category_name, description) VALUES ('OUTERWEAR', 'Jackets and outerwear.');
-END
-
--- PRODUCTS --
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = '96 Double Layer Jersey' AND color = 'Electric Blue')
-BEGIN
-    DECLARE @CatId_96DoubleLayerJersey_ElectricBlue INT;
-    SELECT @CatId_96DoubleLayerJersey_ElectricBlue = category_id FROM Categories WHERE category_name = 'JERSEYS';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_96DoubleLayerJersey_ElectricBlue, '96 Double Layer Jersey', 'Double-layer mesh construction. Moisture-wicking fabric. Streetwear meets athletic culture.', 2590, 100, 'L', 'Electric Blue', 'https://groovypakistan.com/cdn/shop/files/4_aea94a94-ea5c-4083-8296-0ca07282c278.jpg?crop=center&height=2025&v=1756896134&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = '96 Double Layer Jersey' AND color = 'Black')
-BEGIN
-    DECLARE @CatId_96DoubleLayerJersey_Black INT;
-    SELECT @CatId_96DoubleLayerJersey_Black = category_id FROM Categories WHERE category_name = 'JERSEYS';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_96DoubleLayerJersey_Black, '96 Double Layer Jersey', 'Double-layer mesh construction. Moisture-wicking fabric.', 2590, 100, 'L', 'Black', 'https://groovypakistan.com/cdn/shop/files/1_0c3b587c-3b0d-40b4-bf8f-1a9467b1bbbc.jpg?crop=center&height=2025&v=1775575788&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = '96 Double Layer Jersey' AND color = 'Frost Blue')
-BEGIN
-    DECLARE @CatId_96DoubleLayerJersey_FrostBlue INT;
-    SELECT @CatId_96DoubleLayerJersey_FrostBlue = category_id FROM Categories WHERE category_name = 'JERSEYS';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_96DoubleLayerJersey_FrostBlue, '96 Double Layer Jersey', 'Double-layer mesh construction. Moisture-wicking fabric.', 2590, 100, 'L', 'Frost Blue', 'https://groovypakistan.com/cdn/shop/files/12_8721e3f1-dd01-4aec-a248-703f8780f3bf.jpg?crop=center&height=2025&v=1756895707&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = '96 Double Layer Jersey' AND color = 'Racing Green')
-BEGIN
-    DECLARE @CatId_96DoubleLayerJersey_RacingGreen INT;
-    SELECT @CatId_96DoubleLayerJersey_RacingGreen = category_id FROM Categories WHERE category_name = 'JERSEYS';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_96DoubleLayerJersey_RacingGreen, '96 Double Layer Jersey', 'Double-layer mesh construction. Moisture-wicking fabric.', 2590, 100, 'L', 'Racing Green', 'https://groovypakistan.com/cdn/shop/files/14_17bae632-c615-43bd-a22c-6075517be7fe.jpg?crop=center&height=2025&v=1756894523&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = '96 Double Layer Jersey' AND color = 'Mocha Brown')
-BEGIN
-    DECLARE @CatId_96DoubleLayerJersey_MochaBrown INT;
-    SELECT @CatId_96DoubleLayerJersey_MochaBrown = category_id FROM Categories WHERE category_name = 'JERSEYS';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_96DoubleLayerJersey_MochaBrown, '96 Double Layer Jersey', 'Double-layer mesh construction. Moisture-wicking fabric.', 2590, 100, 'L', 'Mocha Brown', 'https://groovypakistan.com/cdn/shop/files/1_b4175311-da33-4136-85f2-b8d296a1715d.jpg?crop=center&height=2025&v=1755776524&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'CORE Denim' AND color = 'Dark Stone')
-BEGIN
-    DECLARE @CatId_COREDenim_DarkStone INT;
-    SELECT @CatId_COREDenim_DarkStone = category_id FROM Categories WHERE category_name = 'DENIM';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_COREDenim_DarkStone, 'CORE Denim', 'Classic 5-pocket construction. Medium wash. Streetwear-cut silhouette.', 3600, 100, '32', 'Dark Stone', 'https://groovypakistan.com/cdn/shop/files/1_073cb8a5-e2b6-4a05-8c0e-8e54ed9c7555.jpg?crop=center&height=2025&v=1772897588&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'Jorts' AND color = 'Dark Stone')
-BEGIN
-    DECLARE @CatId_Jorts_DarkStone INT;
-    SELECT @CatId_Jorts_DarkStone = category_id FROM Categories WHERE category_name = 'DENIM';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_Jorts_DarkStone, 'Jorts', 'Above-knee denim shorts. Raw hem finish. Summer staple.', 2400, 100, '32', 'Dark Stone', 'https://groovypakistan.com/cdn/shop/files/5_c1f094c2-34c6-4132-8647-b186d07ecad2.jpg?crop=center&height=2025&v=1767735827&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'CORE Denim' AND color = 'White Stone')
-BEGIN
-    DECLARE @CatId_COREDenim_WhiteStone INT;
-    SELECT @CatId_COREDenim_WhiteStone = category_id FROM Categories WHERE category_name = 'DENIM';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_COREDenim_WhiteStone, 'CORE Denim', 'Light wash denim. Clean minimal finish.', 3600, 100, '32', 'White Stone', 'https://groovypakistan.com/cdn/shop/files/1_38eab3b3-0e8c-44ab-ae20-a5e7c021108f.jpg?crop=center&height=2025&v=1772897363&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'REBIRTH Tee' AND color = 'Mineral Wash')
-BEGIN
-    DECLARE @CatId_REBIRTHTee_MineralWash INT;
-    SELECT @CatId_REBIRTHTee_MineralWash = category_id FROM Categories WHERE category_name = 'GRAPHIC TEES';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_REBIRTHTee_MineralWash, 'REBIRTH Tee', 'Mineral washed heavyweight tee. Vintage feel. TRACE graphic print.', 2490, 100, 'L', 'Mineral Wash', 'https://groovypakistan.com/cdn/shop/files/9_a6fa3c2d-44ff-4280-bb28-4acef96aaa15.jpg?crop=center&height=2025&v=1756891432&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'Afterdark Piping Top' AND color = 'Black')
-BEGIN
-    DECLARE @CatId_AfterdarkPipingTop_Black INT;
-    SELECT @CatId_AfterdarkPipingTop_Black = category_id FROM Categories WHERE category_name = 'GRAPHIC TEES';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_AfterdarkPipingTop_Black, 'Afterdark Piping Top', 'Contrast piping detail. Long sleeve. Statement streetwear piece.', 2590, 100, 'L', 'Black', 'https://groovypakistan.com/cdn/shop/files/4332.jpg?crop=center&height=2025&v=1747135205&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'ROLLER TEE' AND color = 'Black + White')
-BEGIN
-    DECLARE @CatId_ROLLERTEE_BlackWhite INT;
-    SELECT @CatId_ROLLERTEE_BlackWhite = category_id FROM Categories WHERE category_name = 'GRAPHIC TEES';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_ROLLERTEE_BlackWhite, 'ROLLER TEE', 'Bold graphic print. Premium cotton. Street-ready silhouette.', 2590, 100, 'L', 'Black + White', 'https://groovypakistan.com/cdn/shop/files/3_6ebb33cf-b84b-4ca6-b31f-2010ae6153d0.jpg?crop=center&height=2025&v=1755899622&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'SOLO LEVELING' AND color = 'Black')
-BEGIN
-    DECLARE @CatId_SOLOLEVELING_Black INT;
-    SELECT @CatId_SOLOLEVELING_Black = category_id FROM Categories WHERE category_name = 'GRAPHIC TEES';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_SOLOLEVELING_Black, 'SOLO LEVELING', 'Anime-inspired graphic. Heavy cotton. Collector''s piece.', 2290, 100, 'L', 'Black', 'https://groovypakistan.com/cdn/shop/files/9_162c6b36-7a1d-497c-8058-bbc3c7d6f43a.jpg?crop=center&height=2025&v=1756893713&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'Institute of GRVY' AND color = 'Black + White')
-BEGIN
-    DECLARE @CatId_InstituteofGRVY_BlackWhite INT;
-    SELECT @CatId_InstituteofGRVY_BlackWhite = category_id FROM Categories WHERE category_name = 'GRAPHIC TEES';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_InstituteofGRVY_BlackWhite, 'Institute of GRVY', 'Collegiate-inspired graphic. Premium cotton construction.', 2290, 100, 'L', 'Black + White', 'https://groovypakistan.com/cdn/shop/files/1_d342b41a-852c-4748-a78f-1dd1a93c4e37.jpg?crop=center&height=2025&v=1756293017&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'Young & Turnt Tee' AND color = 'Black')
-BEGIN
-    DECLARE @CatId_YoungTurntTee_Black INT;
-    SELECT @CatId_YoungTurntTee_Black = category_id FROM Categories WHERE category_name = 'GRAPHIC TEES';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_YoungTurntTee_Black, 'Young & Turnt Tee', 'Statement graphic. Youth culture inspired. Heavy cotton.', 2290, 100, 'L', 'Black', 'https://groovypakistan.com/cdn/shop/files/1_961722c2-6656-4397-80db-5b01965ca3f9.jpg?crop=center&height=2025&v=1756893545&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'Alpha Jersey' AND color = 'Mocha Brown')
-BEGIN
-    DECLARE @CatId_AlphaJersey_MochaBrown INT;
-    SELECT @CatId_AlphaJersey_MochaBrown = category_id FROM Categories WHERE category_name = 'JERSEYS';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_AlphaJersey_MochaBrown, 'Alpha Jersey', 'Lightweight mesh jersey. Athletic-inspired streetwear.', 2290, 100, 'L', 'Mocha Brown', 'https://groovypakistan.com/cdn/shop/files/2_2199590b-0c3e-4781-a840-c8a476168c16.jpg?crop=center&height=2025&v=1755781582&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'Superman Full Sleeves Tee' AND color = 'Frost + Electric Blue')
-BEGIN
-    DECLARE @CatId_SupermanFullSleevesTee_FrostElectricBlue INT;
-    SELECT @CatId_SupermanFullSleevesTee_FrostElectricBlue = category_id FROM Categories WHERE category_name = 'GRAPHIC TEES';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_SupermanFullSleevesTee_FrostElectricBlue, 'Superman Full Sleeves Tee', 'Full sleeve graphic tee. Pop culture meets streetwear.', 2590, 100, 'L', 'Frost + Electric Blue', 'https://groovypakistan.com/cdn/shop/files/2_1479ad23-9c8a-4123-81ee-e998e0503266.jpg?crop=center&height=2025&v=1756892560&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'Baggy Trousers' AND color = 'Black')
-BEGIN
-    DECLARE @CatId_BaggyTrousers_Black INT;
-    SELECT @CatId_BaggyTrousers_Black = category_id FROM Categories WHERE category_name = 'SWEATPANTS & TROUSERS';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_BaggyTrousers_Black, 'Baggy Trousers', 'Wide-leg silhouette. Relaxed fit. Everyday streetwear trouser.', 2490, 100, 'M', 'Black', 'https://groovypakistan.com/cdn/shop/files/1_fd68d348-5bf2-480c-8a33-6eb176f05e16.jpg?crop=center&height=2025&v=1756296747&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'Baggy Trousers' AND color = 'Mocha Brown')
-BEGIN
-    DECLARE @CatId_BaggyTrousers_MochaBrown INT;
-    SELECT @CatId_BaggyTrousers_MochaBrown = category_id FROM Categories WHERE category_name = 'SWEATPANTS & TROUSERS';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_BaggyTrousers_MochaBrown, 'Baggy Trousers', 'Wide-leg silhouette. Relaxed fit. Everyday streetwear trouser.', 2490, 100, 'M', 'Mocha Brown', 'https://groovypakistan.com/cdn/shop/files/4_50f3fa05-251e-405f-b037-f8d71e1809cd.jpg?crop=center&height=2025&v=1756296793&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'CORE Tees' AND color = 'Black')
-BEGIN
-    DECLARE @CatId_CORETees_Black INT;
-    SELECT @CatId_CORETees_Black = category_id FROM Categories WHERE category_name = 'ESSENTIAL TOPS';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_CORETees_Black, 'CORE Tees', 'Essential blank tee. Premium cotton. The perfect base layer.', 2290, 100, 'L', 'Black', 'https://groovypakistan.com/cdn/shop/files/5_965b141a-ad1e-41e2-a463-c9df8897cadc.jpg?crop=center&height=2025&v=1741981383&width=1558');
-END
-
-IF NOT EXISTS (SELECT 1 FROM Products WHERE product_name = 'Jorts' AND color = 'White Stone')
-BEGIN
-    DECLARE @CatId_Jorts_WhiteStone INT;
-    SELECT @CatId_Jorts_WhiteStone = category_id FROM Categories WHERE category_name = 'DENIM';
-    INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-    VALUES (@CatId_Jorts_WhiteStone, 'Jorts', 'Light wash denim shorts. Above-knee cut. Summer essential.', 2400, 100, '32', 'White Stone', 'https://groovypakistan.com/cdn/shop/files/1_3420be6d-52c3-4854-83ae-1e70511674ea.jpg?crop=center&height=2025&v=1772897986&width=1558');
-END
 
