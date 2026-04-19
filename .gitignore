@@ -63,11 +63,9 @@ logs/
 *.log
 
 # ──────────────────────────────────────────────────────────────
-# Local SQL dumps (keep folder via .gitkeep, ignore the .bak files)
+# Local SQL dumps
 # ──────────────────────────────────────────────────────────────
 *.bak
 *.sqlbak
 *.mdf
 *.ldf
-database/backup/*
-!database/backup/.gitkeep
