@@ -106,41 +106,37 @@ CREATE TABLE Shopping_Cart (
 -- ============================================================
 
 INSERT INTO Categories (category_name, description) VALUES
-('JERSEYS', 'Jerseys category.'),
-('DENIM', 'Denim and jeans.'),
-('GRAPHIC TEES', 'Graphic t-shirts.'),
-('SWEATPANTS & TROUSERS', 'Sweatpants and trousers.'),
-('CARGOS', 'Cargo pants.'),
-('ESSENTIAL TOPS', 'Basic everyday tops.');
+('Research Chemicals', 'Items for the bold and the curious.'),
+('Personal Care',      'Grooming and maintenance.'),
+('Streetwear',         'Clothing for the urban explorer.');
 
 INSERT INTO Users (username, email, password_hash, full_name, phone_number, address) VALUES
-('Saad_Trace',  'saad@trace.pk',     'hash_12345', 'Saad Ahmed',      '0300-1111111', '123 Fashion Ave, Lahore'),
-('Huzaifa_Drip',  'huzaifa@trace.pk',  'hash_67890', 'Huzaifa Hayee',   '0300-2222222', '456 Trend Blvd, Karachi'),
-('Abdullah_Style',  'abdullah@trace.pk', 'hash_abcde', 'Abdullah Sheikh', '0300-3333333', '789 Hype St, Islamabad');
+('Saad_The_Cook',  'saad@example.com',     'hash_12345', 'Saad Ahmed',      '555-0101', '123 Breaking Bad Lane'),
+('huZaifa_Beard',  'huzaifa@example.com',  'hash_67890', 'Huzaifa Hayee',   '555-0202', '456 Follicle Ave'),
+('Abdullah_Flex',  'abdullah@example.com', 'hash_abcde', 'Abdullah Sheikh', '555-0303', '789 Gains Blvd');
 
 INSERT INTO Admins (username, password_hash, full_name, email) VALUES
-('Admin_Trace', 'admin_hash_99', 'Trace Owner', 'admin@trace.pk');
+('Big_Boss', 'admin_hash_99', 'The Overseer', 'admin@store.com');
 
-INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url) VALUES
-(1, '96 Double Layer Jersey', 'Double-layer mesh construction.', 2590.00, 100, 'L', 'Electric Blue', 'https://groovypakistan.com/cdn/shop/files/4_aea94a94-ea5c-4083-8296-0ca07282c278.jpg?crop=center&height=2025&v=1756896134&width=1558'),
-(2, 'CORE Denim', 'Classic 5-pocket construction.', 3600.00, 100, '32', 'Dark Stone', 'https://groovypakistan.com/cdn/shop/files/1_073cb8a5-e2b6-4a05-8c0e-8e54ed9c7555.jpg?crop=center&height=2025&v=1772897588&width=1558'),
-(3, 'REBIRTH Tee', 'Mineral washed heavyweight tee.', 2490.00, 100, 'L', 'Mineral Wash', 'https://groovypakistan.com/cdn/shop/files/9_a6fa3c2d-44ff-4280-bb28-4acef96aaa15.jpg?crop=center&height=2025&v=1756891432&width=1558'),
-(4, 'Baggy Trousers', 'Wide-leg silhouette.', 2490.00, 100, 'M', 'Black', 'https://groovypakistan.com/cdn/shop/files/1_fd68d348-5bf2-480c-8a33-6eb176f05e16.jpg?crop=center&height=2025&v=1756296747&width=1558'),
-(5, 'Cargo Pants', 'Heavy-duty streetwear cargo.', 3200.00, 60, 'L', 'Olive', 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=1000&q=80');
+INSERT INTO Products (category_id, product_name, description, price, stock_quantity) VALUES
+(1, 'Blue Sky',       'I did it, because I was good at it.', 50.00,   100),
+(2, 'Minoxidil',      'Unc use it.',                         20.00,    50),
+(1, 'Pure Caffeine',  'Mids be driving me crazy.',           15.00,   200);
 
 -- Orders
 INSERT INTO Orders (user_id, total_amount, delivery_address, order_status)
-VALUES (1, 2490.00, '123 Fashion Ave, Lahore', 'Processing');
+VALUES (1, 65.00, '123 Breaking Bad Lane', 'Processing');
 
 INSERT INTO Orders (user_id, total_amount, delivery_address, order_status)
-VALUES (2, 3600.00, '456 Trend Blvd, Karachi', 'Shipped');
+VALUES (2, 20.00, '456 Follicle Ave', 'Shipped');
 
 -- Order Items
 INSERT INTO Order_Items (order_id, product_id, quantity, unit_price) VALUES
-(1, 4, 1, 2490.00);
+(1, 1, 1, 50.00),
+(1, 3, 1, 15.00);
 
 INSERT INTO Order_Items (order_id, product_id, quantity, unit_price)
-VALUES (2, 2, 1, 3600.00);
+VALUES (2, 2, 1, 20.00);
 
 -- Shopping Cart
 INSERT INTO Shopping_Cart (user_id, product_id, quantity) VALUES (3, 3, 5);
@@ -148,13 +144,18 @@ INSERT INTO Shopping_Cart (user_id, product_id, quantity) VALUES (1, 1, 2);
 
 -- Extra product + order for HAVING > 5 demo
 INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
-VALUES (6, 'Essential Cotton Shirt', 'Casual everyday shirt', 2290.00, 100, 'M', 'White', 'https://groovypakistan.com/cdn/shop/files/5_965b141a-ad1e-41e2-a463-c9df8897cadc.jpg');
+VALUES (1, 'Men Cotton Shirt', 'Casual everyday shirt', 1200.00, 100, 'M', 'White', 'shirt.jpg');
 
 INSERT INTO Orders (user_id, order_date, total_amount, payment_method, delivery_address, order_status)
-VALUES (1, '2026-03-01', 13740.00, 'Cash on Delivery', '123 Fashion Ave, Lahore', 'Delivered');
+VALUES (1, '2026-03-01', 7200.00, 'Cash on Delivery', 'House 5, Model Town, Lahore', 'Delivered');
 
 INSERT INTO Order_Items (order_id, product_id, quantity, unit_price)
-VALUES (3, 6, 6, 2290.00);
+VALUES (3, 4, 6, 1200.00);
+
+-- Extra product for Streetwear discount demo
+INSERT INTO Products (category_id, product_name, description, price, stock_quantity, size, color, image_url)
+VALUES (3, 'Cargo Pants', 'Heavy-duty streetwear cargo trousers.', 3200.00, 60, 'L', 'Olive', 'cargo.jpg');
+
 
 -- ============================================================
 --  PHASE 2 - FUNCTIONALITIES
@@ -816,9 +817,6 @@ WHERE o.order_status = 'Processing'
 ORDER BY order_date ASC;
 
 
-INSERT INTO Admins (username, email, full_name, password_hash)
-VALUES ('admin', 'admin@trace.pk', 'TRACE Admin', 'admin123');
-
 
 -- ------------------------------------------------------------
 -- Functionality 27: Apply a Seasonal Discount to a Category
@@ -967,9 +965,3 @@ VALUES ('huzaifa_admin', 'huzhehe', 'Muhammad Huzaifa Hayee', 'huzaifaTheAdmin@g
 SELECT admin_id, username, email, password_hash
 FROM Admins
 WHERE email = 'huzaifaTheAdmin@gmail.com';
-INSERT INTO Admins (username, email, full_name, password_hash)
-VALUES ('admin', 'admin@trace.pk', 'TRACE Admin', 'admin123');
-
-USE OnlineClothingBrand;
-SELECT * FROM Admins;
-
