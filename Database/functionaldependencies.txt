@@ -1,0 +1,64 @@
+Trace.pk Database Normalization Analysis
+===========================================
+
+1. Functional Dependencies (FDs)
+--------------------------------
+Below are the core dependencies identified for each table:
+
+[Users]
+- user_id -> username, email, password_hash, full_name, phone_number, address, registration_date
+- email -> user_id (Candidate Key)
+- username -> user_id (Candidate Key)
+
+[Categories]
+- category_id -> category_name, description
+- category_name -> category_id (Candidate Key)
+
+[Products]
+- product_id -> category_id, product_name, description, price, stock_quantity, size, color, image_url, date_added
+
+[Orders]
+- order_id -> user_id, order_date, total_amount, payment_method, delivery_address, order_status
+
+[Order_Items]
+- order_item_id -> order_id, product_id, quantity, unit_price
+- (order_id, product_id) -> order_item_id, quantity, unit_price
+
+[Shopping_Cart]
+- cart_id -> user_id, product_id, quantity, date_added
+- (user_id, product_id) -> cart_id, quantity, date_added
+
+2. Normalization Steps
+----------------------
+
+Phase 1: First Normal Form (1NF)
+- Requirement: All columns must contain atomic values, and there should be no repeating groups.
+- Analysis: All tables in this schema store scalar values (integers, decimals, strings). Lists of items (e.g., products in an order) are stored in separate rows in the Order_Items table rather than as a CSV string in the Orders table.
+- Result: 1NF Satisfied.
+
+Phase 2: Second Normal Form (2NF)
+- Requirement: Must be in 1NF and every non-prime attribute must be fully functionally dependent on the primary key.
+- Analysis: All tables use single-column primary keys (user_id, product_id, etc.) or surrogate keys (order_item_id). Since the primary keys are single columns, partial dependency on a subset of the key is impossible.
+- Result: 2NF Satisfied.
+
+Phase 3: Third Normal Form (3NF)
+- Requirement: Must be in 2NF and there should be no transitive dependencies (non-key attributes depending on other non-key attributes).
+- Analysis: 
+    - In Products, no non-key attribute like 'color' depends on 'price'. 
+    - In Orders, 'delivery_address' depends on the order (or user), not on the 'payment_method'.
+    - Every attribute depends only on the PK.
+- Result: 3NF Satisfied.
+
+Phase 4: Boyce-Codd Normal Form (BCNF)
+- Requirement: For every non-trivial functional dependency X -> Y, X must be a superkey.
+- Analysis: 
+    - In Admins, 'email' is a candidate key. Since email -> admin_id and admin_id -> email, both determinants are superkeys.
+    - All other tables have only the Primary Key as the determinant for other attributes.
+- Result: BCNF Satisfied.
+
+3. Decomposition Logic
+----------------------
+The schema was decomposed to ensure data integrity:
+- Order Details are separated from Orders to allow multiple products per order (1:N).
+- Categories are separated from Products to avoid redundant description storage and update anomalies.
+- Shopping Cart is isolated to handle transient session data without cluttering the persistent Orders history.

@@ -8,6 +8,7 @@ import AuthLayout from '@/components/layout/AuthLayout';
 import AdminLayout from '@/components/layout/AdminLayout';
 import AccountLayout from '@/components/layout/AccountLayout';
 import SplashScreen from '@/components/common/SplashScreen';
+import ScrollToTop from '@/components/common/ScrollToTop';
 
 // Storefront Pages
 import HomePage from '@/pages/HomePage';
@@ -58,6 +59,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <ScrollToTop />
         <SplashScreen />
         <Toaster
           position="top-right"
